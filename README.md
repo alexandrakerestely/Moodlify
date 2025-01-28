@@ -1,5 +1,6 @@
 # Moodlify
-A distributed system application implementing a learning platform 
+A distributed system application implementing the management of a learning platform.
+
 This project was developed as an uni assignment and transferred here. To see the full commit history, please check here: https://github.com/TUIasi-AC-licenta-POS/activitatea-de-laborator-2024-2025-Alexandra-Kerestely/tree/proiect (branch proiect)
 
 ## Functionalities
