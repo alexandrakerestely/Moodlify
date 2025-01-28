@@ -1,0 +1,115 @@
+services:
+  academia-db:
+    image: mariadb:latest
+    container_name: academia-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: academia-db
+      MYSQL_USER: academia-manager
+      MYSQL_PASSWORD: manager123
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./posproject/src/main/resources/sql-scripts:/docker-entrypoint-initdb.d 
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 4
+
+  subjects-db:
+    image:  mongo:latest
+    container_name: subjects-db
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=subjects
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: bind
+        source: ./Mongodb/data 
+        target: /data/db
+      - ./Mongodb/src/resources/db-seeder.js:/docker-entrypoint-initdb.d/db-seeder.js:ro
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 4
+
+  idm-db:
+    image: mariadb:latest
+    container_name: idm-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: idm-db
+      MYSQL_USER: idm-manager
+      MYSQL_PASSWORD: manager123
+      MARIADB_CHARACTER_SET_SERVER: utf8mb4
+      MARIADB_COLLATION_SERVER: utf8mb4_general_ci
+    volumes:
+      - ./gRPC/resources/sql:/docker-entrypoint-initdb.d
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 4
+
+  academia-service:
+    build:
+      context: ./posproject
+      dockerfile: Dockerfile
+    container_name: academia-service
+    restart: always
+    depends_on:
+      academia-db:
+        condition: service_healthy
+      idm-service:
+        condition: service_started
+    ports:
+      - "8080:8080"
+
+  subjects-service:
+    build:
+      context: ./Mongodb
+      dockerfile: Dockerfile
+    container_name: subjects-service 
+    restart: always
+    depends_on:
+      subjects-db:
+        condition: service_healthy
+      academia-service:
+        condition: service_started
+    ports:
+      - "8000:8000"
+
+  idm-service:
+    build:
+      context: ./gRPC
+      dockerfile: Dockerfile
+    container_name: idm-service
+    restart: always
+    depends_on:
+      idm-db:
+        condition: service_healthy
+    ports:
+      - "50051:50051"
+  
+  envoy:
+    image: envoyproxy/envoy:v1.26.0
+    container_name: envoy-proxy
+    restart: always
+    ports:
+      - "9090:9090"  
+    volumes:
+      - ../frontend/frontend/envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      - idm-service

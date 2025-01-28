@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package com.POSproject.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.POSproject.grpc";
+option java_outer_classname = "Auth";
+
+service AuthService {
+    rpc RegisterUser(RegisterRequest) returns (RegisterResponse);
+    rpc LoginUser(LoginRequest) returns (LoginResponse);
+    rpc CheckToken(CheckTokenRequest) returns (CheckTokenResponse);
+    rpc DestroyToken(DestroyTokenRequest) returns (DestroyTokenResponse);
+    rpc DeleteUser(DeleteRequest) returns (DeleteResponse);
+    rpc UpdateUser(UpdateRequest) returns (UpdateResponse);
+}
+
+message RegisterRequest {
+    string admin_token = 1;
+    string email = 2;
+    string password = 3;
+    string role = 4;
+}
+
+message RegisterResponse {
+    bool success = 1;
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    bool success = 1;
+    string token = 2;
+}
+
+message CheckTokenRequest {
+    string token = 1;
+}
+
+message CheckTokenResponse {
+    bool valid = 1;
+    string email = 2;
+    string role = 3;
+}
+
+message DestroyTokenRequest {
+    string token = 1;
+}
+
+message DestroyTokenResponse {
+    bool success = 1;
+}
+
+message DeleteRequest {
+    string email = 1;
+}
+
+message DeleteResponse {
+    bool success = 1;
+}
+
+message UpdateRequest {
+    string old_email = 1;
+    string new_email = 2;
+}
+
+message UpdateResponse {
+   bool success = 1;
+}

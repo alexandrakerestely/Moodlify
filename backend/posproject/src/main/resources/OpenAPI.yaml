@@ -1,0 +1,413 @@
+openapi: 3.0.3
+info:
+  title: "Spring Boot REST Academia API"
+  version: "1.0.0"
+  description: "API for Teachers, Students and Subjects."
+servers:
+  - url: http://localhost:8080/api/academia
+
+paths:
+
+  /students:
+    get:
+      summary: Get all students
+      security:
+        - bearerAuth : []
+      responses:
+        '200':
+          description: List of all students
+        '204':
+          description: No students recorded
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+    post:
+      summary: Create a student
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentAddDTO'
+      responses:
+        '201':
+          description: Student Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Student already exists with these details
+        '415':
+          description: Unsupported Media Type
+        '422':
+          description: Student data does not correspond with formatting rules
+
+  /students/{id}:
+    get:
+      summary: Get a student by ID
+      security:
+        - bearerAuth : []
+      responses:
+        '200':
+          description: Get a student by ID
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Student Not Found
+
+    put:
+      summary: Update a student by ID
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentAddDTO'
+      responses:
+        '204':
+          description: Successfully updated student
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Student Not Found
+        '415':
+          description: Unsupported Media Type
+        '422':
+          description: Student data does not correspond with formatting rules
+
+    delete:
+      summary: Delete a student by ID
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successfully deleted student
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Student Not Found
+
+  /{id}/subjects:
+    get:
+      summary: Get a student's subjects
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: List of student's subjects
+        '204':
+          description: Student has no subjects
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+
+  /subjects:
+    get:
+      summary: Get all subjects
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: List of all subjects
+        '204':
+          description: No subjects recorded
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /subjects/{id}:
+    get:
+      summary: Get subject by ID
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Get subject by ID
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Subject Not Found
+
+    put:
+      summary: "Create a new subject/Update an existing subject"
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubjectDTO"
+      responses:
+        '200':
+          description: Successfully created subject
+        '204':
+          description: Successfully updated subject
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Subject Not Found/Teacher ID Not Found
+        '409':
+          description: Subject already exists with these details
+        '415':
+          description: Unsupported Media Type
+        '422':
+          description: Subject data does not correspond with formatting rules
+
+    delete:
+      summary: "Delete a subject by ID"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '204':
+          description: Successfully deleted subject
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Subject Not Found
+        '500':
+          description: Internal Server Error
+
+  /subjects/{id}/students:
+    get:
+      summary: "Get students of a subject"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: List of students enrolled in course
+        '204':
+          description: No students enrolled in this course
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Subject Not Found
+
+  /professors:
+    get:
+      summary: Get all students
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: List of all students
+        '204':
+          description: No students recorded
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      summary: Create a teacher
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeacherDTO"
+      responses:
+        '201':
+          description: Teacher Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Teacher already exists with these details
+        '415':
+          description: Unsupported Media Type
+        '422':
+          description: Teacher data does not correspond with formatting rules
+
+
+
+  /professors/{id}:
+    get:
+      summary: Get teacher by ID
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Get teacher by ID
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Teacher Not Found
+    delete:
+      summary: Delete teacher by ID
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '204':
+          description: Successfully deleted teacher
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Teacher Not Found
+
+    put:
+      summary: Update teacher by ID
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '204':
+          description: Successfully updated teacher
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '422':
+          description: Teacher data does not correspond with formatting rules
+
+  /professors/{id}/subjects:
+    get:
+      summary: Update teacher by ID
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: List of subjects owned by the professors
+        '204':
+          description: No subjects owned by the professors
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    SubjectDTO:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        studyYear:
+          type: integer
+        subjectType:
+          type: string
+        subjectCategory:
+          type: string
+        creditsNumber:
+          type: integer
+        teacherId:
+          type: integer
+
+    StudentDTO:
+      type: object
+      properties:
+        surname:
+          type: string
+        name:
+          type: integer
+        email:
+          type: string
+        group:
+          type: string
+        studyYear:
+          type: integer
+        studyCycle:
+          type: string
+        id:
+          type: integer
+        joinedSubjects:
+          type: array
+          items:
+            type: string
+
+    StudentAddDTO:
+      type: object
+      properties:
+        surname:
+          type: string
+        name:
+          type: integer
+        email:
+          type: string
+        group:
+          type: string
+        studyYear:
+          type: integer
+        studyCycle:
+          type: string
+        joinedSubjects:
+          type: array
+          items:
+            type: string
+
+    TeacherDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        didacticGrade:
+          type: string
+        professorType:
+          type: string
+        id:
+          type: integer
+        subjectsOwned:
+          type: array
+          items:
+            type: string
+
+    TeacherAddDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        didacticGrade:
+          type: string
+        professorType:
+          type: string
+        subjectsOwned:
+          type: array
+          items:
+            type: string
