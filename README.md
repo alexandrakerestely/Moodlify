@@ -15,4 +15,5 @@ This project was developed as an uni assignment and transferred here. To see the
 - Python and MongoDB for materials microservice
 - Python and MariaDB for gRPC microservice
 - Docker Compose for microservice containerization
-- React Vite and Envoy for frontend
+- React for frontend
+- Envoy as a gRPC proxy for the frontend
